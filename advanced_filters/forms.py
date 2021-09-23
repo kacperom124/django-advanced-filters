@@ -166,9 +166,6 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
         data['value'] = (dtfrom, dtto)
 
     def clean(self):
-        for form in self.fields_formset:
-            if not form.is_valid():
-                form.cleaned_data = {'field': 'id', 'DELETE': True}
         cleaned_data = super(AdvancedFilterQueryForm, self).clean()
         if cleaned_data.get('operator') == "range":
             if ('value_from' in cleaned_data and
@@ -308,6 +305,9 @@ class AdvancedFilterForm(CleanWhiteSpacesMixin, forms.ModelForm):
         self.initialize_form(instance, self._model, data, extra_form)
 
     def clean(self):
+        for form in self.fields_formset:
+            if not form.is_valid():
+                form.cleaned_data = {'field': 'id', 'DELETE': True}
         cleaned_data = super(AdvancedFilterForm, self).clean()
         if not self.fields_formset.is_valid():
             logger.debug(
