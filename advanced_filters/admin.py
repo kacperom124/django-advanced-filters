@@ -108,9 +108,17 @@ class AdminAdvancedFiltersMixin(object):
                      ).changelist_view(request, extra_context=extra_context)
 
 
+class MyAdvancedFilterForm(AdvancedFilterForm):
+    def clean(self):
+        for form in self.fields_formset:
+            if not form.is_valid():
+                form.cleaned_data = {'field': 'id', 'DELETE': True}
+        return super().clean()
+
+
 class AdvancedFilterAdmin(admin.ModelAdmin):
     model = AdvancedFilter
-    form = AdvancedFilterForm
+    form = MyAdvancedFilterForm
     extra = 0
 
     list_display = ('title', 'model', 'created_by', )
